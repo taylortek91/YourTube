@@ -378,7 +378,8 @@ public final class InfoItemDialog {
                     StreamDialogDefaultEntry.SHARE,
                     StreamDialogDefaultEntry.OPEN_IN_BROWSER,
                     StreamDialogDefaultEntry.BLOCK_VIDEO,
-                    StreamDialogDefaultEntry.BLOCK_CHANNEL
+                    StreamDialogDefaultEntry.BLOCK_CHANNEL,
+                    StreamDialogDefaultEntry.ALWAYS_ALLOW_CHANNEL
             );
             addPlayWithKodiEntryIfNeeded();
             addLearningContentEntryIfNeeded();

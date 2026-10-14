@@ -58,6 +58,8 @@ import java.time.OffsetDateTime
 import java.util.function.Consumer
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
+import org.schabi.newpipe.cleanfeed.CleanFeedDecision
+import org.schabi.newpipe.cleanfeed.CleanFeedFilter
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
@@ -830,10 +832,6 @@ class FeedFragment : BaseStateFragment<FeedState>(), ContextualSearchable {
                 DEFAULT_SHOW_MEMBERS_ONLY_IN_FEED
             )
         )
-        val blockingRules = ContentBlockingHelper.getRules(
-            requireContext(),
-            ContentBlockingHelper.Target.SUBSCRIPTIONS
-        )
         val shownStreamCategories = buildSet {
             if (preferences.getBoolean(getString(R.string.feed_show_live_items_key), true)) {
                 add(StreamListFilter.LIVE)
@@ -848,17 +846,22 @@ class FeedFragment : BaseStateFragment<FeedState>(), ContextualSearchable {
                 add(StreamListFilter.UPCOMING)
             }
         }
-        val streamFilteredItems = loadedState.items.filter { item ->
+        val streams = loadedState.items.map { it.streamWithState.stream.toStreamInfoItem() }
+        val verdicts = CleanFeedFilter.create(
+            requireContext(),
+            ContentBlockingHelper.Target.SUBSCRIPTIONS
+        ).evaluate(streams)
+        val streamFilteredItems = loadedState.items.filterIndexed { index, item ->
             val streamWithState = item.streamWithState
             if (hideMembersOnly && streamWithState.stream.requiresMembership) {
-                return@filter false
+                return@filterIndexed false
             }
-            val stream = streamWithState.stream.toStreamInfoItem()
+            val stream = streams[index]
             if (StreamListFilter.categoryOf(stream) !in shownStreamCategories) {
-                return@filter false
+                return@filterIndexed false
             }
-            if (blockingRules.isBlocked(stream)) {
-                return@filter false
+            if (verdicts[index].decision == CleanFeedDecision.HIDE) {
+                return@filterIndexed false
             }
             val state = streamWithState.stateProgressMillis?.let {
                 StreamStateEntity(streamWithState.stream.uid, it)

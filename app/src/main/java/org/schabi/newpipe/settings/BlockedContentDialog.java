@@ -39,9 +39,13 @@ final class BlockedContentDialog<T> {
 
     static AlertDialog showEntries(final Context context, final boolean videos,
                                   final List<Entry> entries, final Consumer<List<Entry>> save) {
-        return new BlockedContentDialog<>(context,
-                videos ? R.string.manage_blocked_videos_title
-                        : R.string.manage_blocked_channels_title,
+        return showEntries(context, videos ? R.string.manage_blocked_videos_title
+                : R.string.manage_blocked_channels_title, entries, save);
+    }
+
+    static AlertDialog showEntries(final Context context, final int title,
+                                  final List<Entry> entries, final Consumer<List<Entry>> save) {
+        return new BlockedContentDialog<>(context, title,
                 new SearchableBlocklist<>(entries, Entry::getLabel,
                         entry -> entry.getLabel() + "\n" + entry.getKey()), save, null).show();
     }

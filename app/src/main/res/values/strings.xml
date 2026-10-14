@@ -475,6 +475,13 @@
     <string name="aislist_warn_behavior_label_value" translatable="false">label</string>
     <string name="aislist_warn_behavior_warn_value" translatable="false">warn</string>
     <string name="aislist_warn_behavior_hide_value" translatable="false">hide</string>
+    <string name="allowed_channels_key" translatable="false">allowed_channels</string>
+    <string name="manage_allowed_channels_key" translatable="false">manage_allowed_channels</string>
+    <string name="clean_feed_enabled_key" translatable="false">clean_feed_enabled</string>
+    <string name="clean_feed_strength_key" translatable="false">clean_feed_strength</string>
+    <string name="clean_feed_strength_light_value" translatable="false">light</string>
+    <string name="clean_feed_strength_balanced_value" translatable="false">balanced</string>
+    <string name="clean_feed_strength_strict_value" translatable="false">strict</string>
     <string name="content_blocking_title">Blocked content</string>
     <string name="content_blocking_summary">Hide videos, channels, and posts using your blocking rules</string>
     <string name="content_blocking_enabled_title">Enable content blocking</string>
@@ -488,6 +495,25 @@
     <string name="content_blocking_target_subscriptions">Subscriptions and channel groups</string>
     <string name="content_blocking_target_remote_playlists">Remote playlists</string>
     <string name="content_blocking_target_comments">Comments</string>
+    <string name="clean_feed_category_title">Clean Feed</string>
+    <string name="clean_feed_enabled_title">Screen low-quality videos</string>
+    <string name="clean_feed_enabled_summary">Hide videos that combine several warning signs, such as bait phrases, shouting titles, or near-identical title templates from one channel. Mentioning AI or uploading often is never enough on its own.</string>
+    <string name="clean_feed_strength_title">Filtering strength</string>
+    <string-array name="clean_feed_strength_entries">
+        <item>Light</item>
+        <item>Balanced</item>
+        <item>Strict</item>
+    </string-array>
+    <string-array name="clean_feed_strength_values">
+        <item>@string/clean_feed_strength_light_value</item>
+        <item>@string/clean_feed_strength_balanced_value</item>
+        <item>@string/clean_feed_strength_strict_value</item>
+    </string-array>
+    <string name="manage_allowed_channels_title">Always-allowed channels</string>
+    <string name="manage_allowed_channels_summary">Channels that are never hidden by AiSList or Clean Feed</string>
+    <string name="allowed_channels_empty">No always-allowed channels</string>
+    <string name="always_allow_channel">Always allow channel</string>
+    <string name="channel_always_allowed">Channel will always be shown</string>
     <string name="aislist_category_title">AiSList</string>
     <string name="aislist_enabled_title">Enable AiSList filtering</string>
     <string name="aislist_enabled_summary">Download the AiSList blocklist and warnlist directly from upstream and apply matching entirely on-device</string>

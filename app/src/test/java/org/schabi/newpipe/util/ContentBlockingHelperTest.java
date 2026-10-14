@@ -207,6 +207,59 @@ class ContentBlockingHelperTest {
         }
     }
 
+    @Test
+    void blockReasonNamesTheMatchingRule() {
+        final ContentBlockingHelper.Rules rules = ContentBlockingHelper.Rules.create(
+                true,
+                Set.of("video-1\tVideo"),
+                Set.of("https://example.com/blocked\tBlocked"),
+                "spoiler",
+                false,
+                Set.of("@ai-channel"));
+
+        assertEquals(ContentBlockingHelper.BlockReason.VIDEO,
+                rules.blockReason(stream("video-1", "Title", "Channel", null)));
+        assertEquals(ContentBlockingHelper.BlockReason.CHANNEL,
+                rules.blockReason(stream("video-2", "Title", "Blocked",
+                        "https://example.com/blocked")));
+        assertEquals(ContentBlockingHelper.BlockReason.KEYWORD,
+                rules.blockReason(stream("video-3", "Spoiler ahead", "Channel", null)));
+        assertEquals(ContentBlockingHelper.BlockReason.COMMUNITY_LIST,
+                rules.blockReason(stream("video-4", "Title", "AI",
+                        "https://www.youtube.com/@ai-channel")));
+        assertEquals(null, rules.blockReason(stream("video-5", "Title", "Channel", null)));
+    }
+
+    @Test
+    void allowedChannelOverridesCommunityListButNotUserRules() {
+        final ContentBlockingHelper.Rules rules = ContentBlockingHelper.Rules.create(
+                true,
+                Set.of("https://www.youtube.com/watch?v=blocked\tBlocked video"),
+                Set.of(),
+                "spoiler",
+                false,
+                Set.of("@ai-channel"),
+                Set.of("https://www.youtube.com/@ai-channel\tTrusted creator"));
+        final String channelUrl = "https://www.youtube.com/@ai-channel";
+
+        assertTrue(rules.isAllowedChannel(channelUrl, "Renamed"));
+        assertTrue(rules.isAllowedChannel(null, "trusted creator"));
+        assertFalse(rules.isBlocked(stream("video-1", "Title", "Trusted creator", channelUrl)));
+        assertTrue(rules.isBlocked(stream("https://www.youtube.com/watch?v=blocked", "Title",
+                "Trusted creator", channelUrl)));
+        assertTrue(rules.isBlocked(stream("video-2", "Spoiler", "Trusted creator",
+                channelUrl)));
+    }
+
+    @Test
+    void disabledRulesAllowNothingSpecial() {
+        final ContentBlockingHelper.Rules rules = ContentBlockingHelper.Rules.create(
+                false, Set.of(), Set.of(), "", false, Set.of(),
+                Set.of("https://example.com/channel\tChannel"));
+
+        assertFalse(rules.isAllowedChannel("https://example.com/channel", "Channel"));
+    }
+
     private static StreamInfoItem stream(final String url,
                                          final String title,
                                          final String uploader,

@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.schabi.newpipe.cleanfeed.CleanFeedDecision;
+import org.schabi.newpipe.cleanfeed.CleanFeedFilter;
+import org.schabi.newpipe.cleanfeed.CleanFeedVerdict;
 import org.schabi.newpipe.databinding.PignateFooterBinding;
 import org.schabi.newpipe.dearrow.DeArrowService;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -156,12 +159,13 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final List<InfoItem> visibleData = new ArrayList<>(data.size());
         final boolean hideMembersOnly = MembersOnlyContentHelper.shouldHide(
                 infoItemBuilder.getContext());
-        final ContentBlockingHelper.Rules blockingRules = ContentBlockingHelper.getRules(
-                infoItemBuilder.getContext(), contentBlockingTarget);
-        for (final InfoItem item : data) {
+        final List<CleanFeedVerdict> verdicts = CleanFeedFilter.create(
+                infoItemBuilder.getContext(), contentBlockingTarget).evaluate(data);
+        for (int i = 0; i < data.size(); i++) {
+            final InfoItem item = data.get(i);
             if (!hideMembersOnly || !(item instanceof StreamInfoItem)
                     || !((StreamInfoItem) item).requiresMembership()) {
-                if (blockingRules.isBlocked(item)) {
+                if (verdicts.get(i).getDecision() == CleanFeedDecision.HIDE) {
                     continue;
                 }
                 visibleData.add(item);

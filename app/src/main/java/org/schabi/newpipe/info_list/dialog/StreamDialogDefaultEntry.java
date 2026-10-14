@@ -174,6 +174,15 @@ public enum StreamDialogDefaultEntry {
                                 Toast.LENGTH_SHORT).show();
                     })),
 
+    ALWAYS_ALLOW_CHANNEL(R.string.always_allow_channel, (fragment, item) ->
+            fetchUploaderUrlIfSparse(fragment.requireContext(), item.getServiceId(), item.getUrl(),
+                    item.getUploaderUrl(), url -> {
+                        ContentBlockingHelper.allowChannel(fragment.requireContext(), url,
+                                item.getUploaderName());
+                        Toast.makeText(fragment.requireContext(),
+                                R.string.channel_always_allowed, Toast.LENGTH_SHORT).show();
+                    })),
+
     OPEN_IN_BROWSER(R.string.open_in_browser, (fragment, item) ->
             ShareUtils.openUrlInBrowser(fragment.requireContext(), item.getUrl())),
 

@@ -68,6 +68,11 @@ public final class ContentBlockingSettingsFragment extends BasePreferenceFragmen
             showEntries(true);
             return true;
         });
+        requirePreference(R.string.manage_allowed_channels_key)
+                .setOnPreferenceClickListener(preference -> {
+                    showAllowedChannels();
+                    return true;
+                });
         aiSListEnabledPreference.setOnPreferenceChangeListener((preference, value) -> {
             final boolean enabled = Boolean.TRUE.equals(value);
             aiSListUpdatePreference.setEnabled(enabled);
@@ -115,6 +120,19 @@ public final class ContentBlockingSettingsFragment extends BasePreferenceFragmen
 
         BlockedContentDialog.showEntries(requireContext(), videos, entries,
                 kept -> saveEntries(videos, kept));
+    }
+
+    private void showAllowedChannels() {
+        final List<Entry> entries = ContentBlockingHelper.getAllowedChannels(requireContext());
+        if (entries.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.allowed_channels_empty,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        BlockedContentDialog.showEntries(requireContext(),
+                R.string.manage_allowed_channels_title, entries,
+                kept -> ContentBlockingHelper.saveAllowedChannels(requireContext(), kept));
     }
 
     private String readKeywords() {
